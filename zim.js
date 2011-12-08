@@ -122,7 +122,7 @@ Com_Zimbra_PGP.prototype.askInfoBar = function() {
                'ZimbraPGP' +
             '</div>' +
             '<div id="infoBarMiddle">' +
-               'This message is signed with the ' + infoDiv.sig.algorithm + ' algorithm! Would you like to verify it\'s signature?' +
+               'This message is signed with the ' + infoDiv.sigObj.algorithm + ' algorithm! Would you like to verify it\'s signature?' +
             '</div>' +
             '<div id="infoBarButton">' +
             '<a class="myButton" href="javascript:void(0)" onclick="Com_Zimbra_PGP.prototype.searchForKey()">Verify!</a>' +
@@ -231,13 +231,13 @@ Com_Zimbra_PGP.prototype._searchBtnListener = function(obj){
         } else {
             alert('Not Verified.');
             this.failBar(key.id,key.user);
-        };
+        }
 
     } else {
         // If no key was found, error out and display the problem. 
         // Will update so manual key entry is possible later. 
         this.errDialog("Can not find key on pgp.mit.edu! Cannot proceed!")
-    };
+    }
 };
 
 Com_Zimbra_PGP.prototype.successBar = function(id,user){
