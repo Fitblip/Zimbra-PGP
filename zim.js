@@ -50,7 +50,7 @@ Com_Zimbra_PGP.prototype.askInfoBar = function() {
     var msg = appCtxt.getCurrentView().getSelection()[0].getFirstHotMsg();
     // Find our infoDiv
     alert('finding infoDiv');
-    var infoDiv = appCtxt.getCurrentView()._msgView._infoBarId;
+    var infoDiv = document.getElementById(appCtxt.getCurrentView()._msgView._infoBarId)
     alert('Parsing Stuffs');
     // Parse out our signature stuff and message text
     infoDiv.sigObj = new parseSig(msg.getTextPart());
