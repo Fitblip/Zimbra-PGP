@@ -37,6 +37,7 @@ Com_Zimbra_PGP.prototype.match = function(line, startIndex) {
         var sig = true; 
     }
     if (header && sig) {
+        alert('Building InfoBar')
         this.askInfoBar();
     }
     return ret;
@@ -44,10 +45,13 @@ Com_Zimbra_PGP.prototype.match = function(line, startIndex) {
 
 // Write infobar to dom
 Com_Zimbra_PGP.prototype.askInfoBar = function() {
-    // Find the message that we're clicked on. 
+    alert('finding email');
+    // Find the message that we're clicked on. TODO: This is a legacy way (apparently...)
     var msg = appCtxt.getCurrentView().getSelection()[0].getFirstHotMsg();
     // Find our infoDiv
-    var infoDiv = document.getElementById(document.getElementById('z_toast').nextSibling.id + '__MSG_infoBar');
+    alert('finding infoDiv');
+    var infoDiv = appCtxt.getCurrentView()._msgView._infoBarId;
+    alert('Parsing Stuffs');
     // Parse out our signature stuff and message text
     infoDiv.sigObj = new parseSig(msg.getTextPart());
     infoDiv.txtObj = new parseText(msg.getTextPart());
@@ -134,7 +138,7 @@ Com_Zimbra_PGP.prototype.askInfoBar = function() {
 
 // Clear out our infobar
 Com_Zimbra_PGP.prototype.destroyInfoBar = function() {
-    var infoDiv = document.getElementById(document.getElementById('z_toast').nextSibling.id + '__MSG_infoBar');
+    var infoDiv = appCtxt.getCurrentView()._msgView._infoBarId;
     infoDiv.innerHTML = "";
 };
 
@@ -176,10 +180,9 @@ Com_Zimbra_PGP.prototype._searchBtnListener = function(obj){
     // Clear our popup
     this._dialog.popdown();
     // Get our infoDiv location
-    var infoDiv = document.getElementById(document.getElementById('z_toast').nextSibling.id + '__MSG_infoBar');  
+    var infoDiv = appCtxt.getCurrentView()._msgView._infoBarId;
     // Create a new temporary div to populate with our response so we can navigate it easier, and hide it.
     var temp_div = document.createElement('div');
-    temp_div.style = 'hidden';
     // Talk to the JSP page to lookup the keyid parsed from the signature
     var response = AjxRpc.invoke(null, '/service/zimlet/com_zimbra_pgp/lookup.jsp?key=' + infoDiv.sigObj.keyid, null, null, true);
     alert('Search finished');
