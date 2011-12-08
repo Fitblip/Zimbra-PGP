@@ -5,22 +5,27 @@
                 but that is dependant on if I can find a good way to import PGP keys, 
                 and keep them secure!
         </summary>
-        <include>mypgp.js</include>
+
         <include>base64.js</include>
         <include>jsbn.js</include>
         <include>jsbn2.js</include>
         <include>md5.js</include>
+        <include>mypgp.js</include>
+        <include>sha1.js</include>
         <include>sha256.js</include>
         <include>zim.js</include>
-        <include>sha1.js</include>
+
         <resource>lookup.jsp</resource>
         <resource>pgp.gif</resource>
+
         <handlerObject>Com_Zimbra_PGP</handlerObject>
+
         <contentObject>
           <matchOn>
             <regex attrs="g">[\-]*BEGIN PGP SIGNATURE[\-]*</regex>
           </matchOn>
         </contentObject>
+
 </zimlet>
 
 
