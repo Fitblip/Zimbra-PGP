@@ -3,29 +3,45 @@
 This file is responsible for all the Zimbra integration functions and everything
 else that's done in the zimbra interface
 
+TODO:
+     => Implement StorageObjects to prevent hitting the bejesus out of pgp.mit.edu
+     => Integrate manual key entry
+     => Investigate new way to get message content, and write in logic to choose
+     => Button that links to my Github
+
 */
 
-// Declare a constructor function we don't use
+/*
+===== Declare a blank constructor, since we don't need one =====
+*/
 Com_Zimbra_PGP = function() {
 };
 
-// Start building up a prototype object for our zimlet
+/*
+===== Build our prototype from our constructor and objectHandler =====
+*/
 Com_Zimbra_PGP.prototype = new ZmZimletBase;
 Com_Zimbra_PGP.prototype.constructor = Com_Zimbra_PGP;
 
-// toString() method returns name of the Zimlet
+/*
+===== Stupid convention, but may be used elsewhere =====
+*/
 Com_Zimbra_PGP.prototype.toString = 
 function() {
     return "Com_Zimbra_PGP";
 };
 
-// Initilization function
+/*
+===== Init functions (not needed really) =====
+*/
 Com_Zimbra_PGP.prototype.init = function() {
     //alert('Starting Zimlet');
 };
 
-// Called when every email is clicked, if it finds the desired headers, ask about verification and 
-// proceed from there. 
+/*
+===== Matches our PGP stuff, and calls the info bar function =====
+===== *NOTE*: Runs multiple times for each message =====
+*/
 Com_Zimbra_PGP.prototype.match = function(line, startIndex) {
     var ret = null;
     var header = false;
@@ -37,21 +53,20 @@ Com_Zimbra_PGP.prototype.match = function(line, startIndex) {
         sig = true; 
     }
     if (header && sig) {
-        //alert('Building InfoBar');
-        this.askInfoBar();
+        this.infoBar();
     }
     return ret;
 };
 
-// Write infobar to dom
-Com_Zimbra_PGP.prototype.askInfoBar = function() {
-    //alert('finding email');
+/*
+===== Draws our initial info bar with the proper algorithm =====
+*/
+Com_Zimbra_PGP.prototype.infoBar = function() {
     // Find the message that we're clicked on. TODO: This is a legacy way (apparently...)
     var msgText = appCtxt.getCurrentView().getSelection()[0].getFirstHotMsg();
     // Find our infoDiv
-    //alert('finding infoDiv');
     var infoDiv = document.getElementById(appCtxt.getCurrentView()._msgView._infoBarId);
-    //alert('Parsing Stuffs');
+
     // Parse out our signature stuff and message text
     infoDiv.sigObj = new parseSig(msgText.getTextPart());
     infoDiv.txtObj = new parseText(msgText.getTextPart());
@@ -73,13 +88,18 @@ Com_Zimbra_PGP.prototype.askInfoBar = function() {
     infoDiv.innerHTML = HTML;
 };
 
-// Clear out our infobar
+/*
+===== Destroys the info bar =====
+*/
+
 Com_Zimbra_PGP.prototype.destroyInfoBar = function() {
     var infoDiv = document.getElementById(appCtxt.getCurrentView()._msgView._infoBarId);
     infoDiv.innerHTML = "";
 };
 
-// Searches cache for keys, if key isn't found, ask to search online. 
+/*
+===== Searches cache for key, if not found, ask about going online =====
+*/
 Com_Zimbra_PGP.prototype.searchForKey = function() {
     // TODO: search the cache here 
     /*
@@ -89,7 +109,9 @@ Com_Zimbra_PGP.prototype.searchForKey = function() {
     this.askSearch();
 };
 
-// Ask about going online to search for the public key
+/*
+===== Confirm it's alright to go online =====
+*/
 Com_Zimbra_PGP.prototype.askSearch = function() {
     // Get our new DWT widget window refrence
     this._dialog = appCtxt.getYesNoMsgDialog(); 
@@ -111,9 +133,10 @@ Com_Zimbra_PGP.prototype.askSearch = function() {
     this._dialog.popup();
 };
 
-// Searches the internet for the key and verifies the signature of the document.
+/*
+===== This searches the interwebs for a suitable public key =====
+*/
 Com_Zimbra_PGP.prototype._searchBtnListener = function(obj){
-    //alert('Search started.');
     // Clear our popup
     this._dialog.popdown();
     // Get our infoDiv location
@@ -122,11 +145,11 @@ Com_Zimbra_PGP.prototype._searchBtnListener = function(obj){
     var temp_div = document.createElement('div');
     // Talk to the JSP page to lookup the keyid parsed from the signature
     var response = AjxRpc.invoke(null, '/service/zimlet/com_zimbra_pgp/lookup.jsp?key=' + infoDiv.sigObj.keyid, null, null, true);
-    //alert('Search finished');
+
     if (response.text !== "" && response.txt !== "No email specified") {
         var msghash = '';
         var verified = false;
-        //alert('Key Found.');
+
         // If the key was found, 
         temp_div.innerHTML = response.text;
         key = temp_div.getElementsByTagName('pre')[0].innerHTML;
@@ -135,7 +158,6 @@ Com_Zimbra_PGP.prototype._searchBtnListener = function(obj){
         sig = infoDiv.sigObj;
         text = infoDiv.txtObj;
 
-        //alert('Start hashing.');
         // Hash our message out, and 
         if (text.hash == "SHA256") {
             msghash = SHA256(infoDiv.txtObj.msg + infoDiv.sigObj.header);
@@ -146,8 +168,7 @@ Com_Zimbra_PGP.prototype._searchBtnListener = function(obj){
         } else {
             this.errDialog("Unsupported hash type! As of right now we can only do SHA-1/SHA-256/MD5.");
         }
-        //alert('Finished hashing.');
-        //alert('Start verification.');
+
         // If we have an RSA key
         if (key.type == "RSA") {
             verified = RSAVerify(sig.rsaZ,key.rsaE,key.rsaN,msghash);
@@ -163,14 +184,11 @@ Com_Zimbra_PGP.prototype._searchBtnListener = function(obj){
         if (!verified && key.type == "RSA") {
             verified = RSAVerify(sig.rsaZ,key.rsasubE,key.rsasubN,msghash);
         }
-        //alert('Finish verification.');
 
         // Successful verification! yay!
         if (verified) {
-            //alert('Verified.');
             this.successBar(key.id,key.user,key.type);
         } else {
-            //alert('Not Verified.');
             this.failBar(key.id,key.user,key.type);
         }
 
@@ -181,45 +199,82 @@ Com_Zimbra_PGP.prototype._searchBtnListener = function(obj){
     }
 };
 
+/*
+===== This is the function responsible for the drawing of the manual key entry stuff =====
+*/
+
+Com_Zimbra_PGP.prototype.manualKeyEntry = function(){
+    HTML = '<div id="keyEntryDiv">' +
+	           '<textarea id="keyEntryTextarea"></textarea>' +
+	       '</div>'
+
+    var sDialogTitle = "<center>Enter in the public key and press \"OK\"</center>";
+
+    this.pView = new DwtComposite(appCtxt.getShell()); //creates an empty div as a child of main shell div
+    this.pView.setSize("500", "500"); // set width and height
+    this.pView.getHtmlElement().style.overflow = "auto"; // adds scrollbar
+    this.pView.getHtmlElement().innerHTML = HTML;
+
+    // pass the title, view & buttons information to create dialog box
+    this._dialog = new ZmDialog({title:sDialogTitle, view:this.pView, parent:appCtxt.getShell(), standardButtons:[DwtDialog.OK_BUTTON]});
+    this._dialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._readKeyListener)); 
+    this._dialog.popup(); //show the dialog
+};
+
+/*
+===== These change the infoBar stuff to pass/fail verification =====
+*/
+
 Com_Zimbra_PGP.prototype.successBar = function(id,user,type){
     document.getElementById('infoBar').className = 'success';
     user = user.replace('<','&lt;').replace('>','&gt;');
     successMsg = "Message signed with <strong>" + type + "</strong> keyid : <strong>" + id + "</strong> and user : <strong>" + user + "</strong> verified successfully!";
     document.getElementById('infoBarMiddle').innerHTML = successMsg;
-
-    alert('Success for keyid: ' + id + ' and user ' + user + '. Yay!');
 };
 
 Com_Zimbra_PGP.prototype.failBar = function(id,user,type){
     document.getElementById('infoBar').className = 'fail';
     user = user.replace('<','&lt;').replace('>','&gt;');
-    failMsg = "Message signed with <strong>" + type + "</strong> keyid : <strong>" + id + "</strong> and user : <strong>" + user + "</strong> verified successfully!";
+    failMsg = "Message signed with <strong>" + type + "</strong> keyid : <strong>" + id + "</strong> and user : <strong>" + user + " *NOT*</strong> verified!";
     document.getElementById('infoBarMiddle').innerHTML = failMsg;
-    alert('Failed for keyid: ' + id + ' and user ' + user + '. Nooo!');
 };
 
+/*
+===== Generic error handler, pass it a message and it displays all scary and everything =====
+*/
+
 Com_Zimbra_PGP.prototype.errDialog = function(msg){
-        //alert('Called errDialog().');
         // Get refrence to our DWT object
-        this._errDialog = appCtxt.getErrorDialog(); 
+        this._errDialog = appCtxt.getMsgDialog(); 
         // Set the style to critical
         var style = DwtMessageDialog.CRITICAL_STYLE;
         // Set the listener callback to just pop down the message
-        this._errdialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._clrBtnListener));
+        this._errDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._clrErrBtnListener));
         // Reset to a good state
-        this._errdialog.reset();
+        this._errDialog.reset();
         // Set our message to the one passed in
-        this._errdialog.setMessage(msg,style);
+        this._errDialog.setMessage(msg,style);
         // Pop it up!
-        this._errdialog.popup();
+        this._errDialog.popup();
 };
 
-Com_Zimbra_PGP.prototype._clrErrBtnListener = function(obj){
+/*
+===== These are the button listeners =====
+*/
+
+Com_Zimbra_PGP.prototype._clrErrBtnListener = function(){
     // Pops down the _dialog refrence
     this._errDialog.popdown();
 };
 
-Com_Zimbra_PGP.prototype._clrBtnListener = function(obj){
+Com_Zimbra_PGP.prototype._clrBtnListener = function(){
     // Pops down the _dialog refrence
+    this._dialog.popdown();
+};
+
+Com_Zimbra_PGP.prototype._readKeyListener = function(){
+    // Get our key pasted in, and clear our the entry in the DOM
+    key = document.getElementById('keyEntryTextarea').value;
+    document.getElementById('keyEntryTextarea').value = "";
     this._dialog.popdown();
 };

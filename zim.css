@@ -38,7 +38,7 @@
 }
 
 .fail {
-   background-color: #fe0002; 
+   background-color: #f4512e; 
 }
 
 .success {
@@ -75,3 +75,14 @@ a.myButton {
    top:1px; 
    text-decoration:none; 
 } 
+
+#keyEntryDiv {
+    float:left;
+    width:100%;
+}
+
+#keyEntryTextarea {
+    width:100%;
+	 height:100%;
+}
+

@@ -179,7 +179,7 @@ function parseSig(text) {
             (debug) && console.log('CRC => ' + CRC)
 			
 			// DSA
-            if (pubalg == 17) {
+            if (pubalg == 11) {
                 primes = ['r','s'];
                 a = {};
                 a['r'] = "";
