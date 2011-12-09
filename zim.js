@@ -102,13 +102,21 @@ Com_Zimbra_PGP.prototype.destroyInfoBar = function() {
 */
 Com_Zimbra_PGP.prototype.searchForKey = function() {
     // Check to see if we have the localStorage object availble
-    if (typeof(window['localStorage']) != "object") {
+    if (typeof(window['localStorage']) == "object") {
+        this._HTML5 = true;
+    } else {
         this._HTML5 = false;
     }
     
     // If this key is found in the cache
     if (this.isInCache(this._infoDiv.sigObj.keyid)) {
-        keytext = this.getFromCache(this._infoDiv.sigObj.keyid)
+        keytext = this.getFromCache(this._infoDiv.sigObj.keyid);
+        // Some error checking for good measure
+        if (!keytext) {
+            this.errDialog('Cache lookup failed! Corrupted keys? Falling back to caching from the internet.');
+            this.removeFromCache(this._infoDiv.sigObj.keyid);
+            this.askSearch(); 
+        }
         this.verifyMsg(keytext);
     // Otherwise, ask about going online
     } else {   
@@ -145,7 +153,7 @@ Com_Zimbra_PGP.prototype.isInCache = function(keyid) {
 Com_Zimbra_PGP.prototype.storeInCache = function(keyid,key) {
     // If we have the necessary localStorage object
     if(this._HTML5) {
-        localStorage.setItem(keyid,escape(key))
+        localStorage.setItem(keyid,escape(key));
     } else {
     //Set our cookies to expire in a year
         var rightNow=new Date();
@@ -173,9 +181,11 @@ Com_Zimbra_PGP.prototype.getFromCache = function(keyid) {
         for (i=0;i<pgpCookies.length;i++) {     
             if (cookies[pgpCookies[i]].trim().split('=')[0] === "ZimbraPGP_" + keyid) {
                 // Delicious cookies
-                keytext = unescape(cookies[pgpCookies[i]].trim().split('=')[1])
+                keytext = unescape(cookies[pgpCookies[i]].trim().split('=')[1]);
+                return keytext;
             }
         }
+        return null;
     }    
 };
 
@@ -256,6 +266,7 @@ Com_Zimbra_PGP.prototype._searchBtnListener = function(obj){
         // If the key was found, 
         temp_div.innerHTML = response.text;
         var keytext = temp_div.getElementsByTagName('pre')[0].innerHTML;
+        this.storeInCache(this._infoDiv.sigObj.keyid,keytext);
         // Call msgVerify()
         this.msgVerify(keytext);
     } else {
@@ -308,7 +319,7 @@ Com_Zimbra_PGP.prototype.msgVerify = function(keytext){
     } else {
         this.failBar(key.id,key.user,key.type);
     }
-}
+};
 
 /*
 ===== This is the function responsible for the drawing of the manual key entry stuff =====
@@ -317,7 +328,7 @@ Com_Zimbra_PGP.prototype.msgVerify = function(keytext){
 Com_Zimbra_PGP.prototype.manualKeyEntry = function(){
     HTML = '<div id="keyEntryDiv">' +
 	           '<textarea id="keyEntryTextarea"></textarea>' +
-	       '</div>'
+	       '</div>';
 
     var sDialogTitle = "<center>Enter in the public key and press \"OK\"</center>";
 
