@@ -94,6 +94,8 @@ Com_Zimbra_PGP.prototype.infoBar = function() {
 */
 
 Com_Zimbra_PGP.prototype.destroyInfoBar = function() {
+    // Find our infoDiv
+    this._infoDiv = document.getElementById(appCtxt.getCurrentView()._msgView._infoBarId);
     this._infoDiv.innerHTML = "";
 };
 
@@ -101,6 +103,8 @@ Com_Zimbra_PGP.prototype.destroyInfoBar = function() {
 ===== Searches cache for key, if not found, ask about going online =====
 */
 Com_Zimbra_PGP.prototype.searchForKey = function() {
+    // Find our infoDiv
+    this._infoDiv = document.getElementById(appCtxt.getCurrentView()._msgView._infoBarId);
     // Check to see if we have the localStorage object availble
     if (typeof(window['localStorage']) == "object") {
         this._HTML5 = true;
@@ -253,6 +257,8 @@ Com_Zimbra_PGP.prototype.askSearch = function() {
 ===== This searches the interwebs for a suitable public key =====
 */
 Com_Zimbra_PGP.prototype._searchBtnListener = function(obj){
+    // Find our infoDiv
+    this._infoDiv = document.getElementById(appCtxt.getCurrentView()._msgView._infoBarId);
     // Clear our popup
     this._dialog.popdown();
     // Get our infoDiv location
@@ -280,6 +286,8 @@ Com_Zimbra_PGP.prototype._searchBtnListener = function(obj){
 ===== This is the function responsible for verify the message itself and calling the proper bar =====
 */
 Com_Zimbra_PGP.prototype.msgVerify = function(keytext){
+    // Find our infoDiv
+    this._infoDiv = document.getElementById(appCtxt.getCurrentView()._msgView._infoBarId);
     var msghash = '';
     var verified = false;
     var key = new publicKey(keytext);
