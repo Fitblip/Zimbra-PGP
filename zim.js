@@ -57,81 +57,18 @@ Com_Zimbra_PGP.prototype.askInfoBar = function() {
     infoDiv.txtObj = new parseText(msgText.getTextPart());
 
     // Inject HTML into the infobar section 
-    // TODO: seperate into it's own CSS file.
-    var HTML = '<style>' +
-            '#infobar {' +
-               'background-color: #efcc44;' +
-               'border: 1px solid grey; position: relative;' +
-               'overflow: hidden;' +
-               'width: 100%;' +
-            '}' +
-            '#infoBarLeft{' +
-               'padding: 8px 0px;' +
-               'position:relative;' +
-               'font-size: 15px;' +
-               'color: black;' +
-               'float: left;' +
-               'width: 15%;' +
-               'display: block;' +
-               'text-align:center' +
-            '}' +
-            '#infoBarMiddle {' +
-               'padding: 8px 0px;' +
-               'font-size: 15px;' +
-               'color: black;' +
-               'float: left;' +
-               'display: block;' +
-               'width: 75%;' +
-               'text-align:center;' +
-            '}' +
-            '#infoBarButton {' +
-               'padding: 5px 0px;' +
-               'font-size: 15px;' +
-               'color: black;' +
-               'float: right;' +
-               'display: block;' +
-               'width:9%;' +
-               'text-align:center' +
-            '}' +
-            'a.myButton {' +
-               'color: 666666;' +
-            '}' +
-            '.myButton {' +
-               'background-color:#f9f9f9;' +
-               '-moz-border-radius:7px;' +
-               '-webkit-border-radius:7px;' +
-               'border-radius:7px;' +
-               'border:1px solid #dcdcdc;' +
-               'display:inline-block;' +
-               'color:#666666;' +
-               'font-family:arial;' +
-               'font-size:16px;' +
-               'font-weight:bold;' +
-               'padding:3px 8px;' +
-               'text-decoration:none;' +
-               'text-shadow:1px 1px 0px #ffffff;' +
-               'text-decoration:none;' +
-               '}.myButton:hover {' +
-               'background-color:#e9e9e9;' +
-               'text-decoration:none;' +
-            '}' +
-            '.myButton:active {' +
-               'position:relative;' +
-               'top:1px;' +
-               'text-decoration:none;' +
-            '}' +
-         '</style>' +
-         '<div id="infoBar" height="100px">' +
-            '<div id="infoBarLeft">' +
-               'ZimbraPGP' +
-            '</div>' +
-            '<div id="infoBarMiddle">' +
-               'This message is signed with the ' + infoDiv.sigObj.algorithm + ' algorithm! Would you like to verify it\'s signature?' +
-            '</div>' +
-            '<div id="infoBarButton">' +
-            '<a class="myButton" href="javascript:void(0)" onclick="Com_Zimbra_PGP.prototype.searchForKey()">Verify!</a>' +
-            '</div>' +
-         '</div>';
+    var HTML = '<div id="infoBar" class="unsure" height="100px">' +
+                 '<div id="infoBarLeft">' +
+                   // TODO: button that links to my github
+                   'ZimbraPGP' +
+                 '</div>' +
+                 '<div id="infoBarMiddle">' +
+                   'This message is signed with the ' + infoDiv.sigObj.algorithm + ' algorithm! Would you like to verify it\'s signature?' +
+                 '</div>' +
+                 '<div id="infoBarButton">' +
+                   '<a class="myButton" href="javascript:void(0)" onclick="Com_Zimbra_PGP.prototype.searchForKey()">Verify!</a>' +
+                 '</div>' +
+               '</div>';
     // Make the bar visible
     infoDiv.innerHTML = HTML;
 };
@@ -231,10 +168,10 @@ Com_Zimbra_PGP.prototype._searchBtnListener = function(obj){
         // Successful verification! yay!
         if (verified) {
             //alert('Verified.');
-            this.successBar(key.id,key.user);
+            this.successBar(key.id,key.user,key.type);
         } else {
             //alert('Not Verified.');
-            this.failBar(key.id,key.user);
+            this.failBar(key.id,key.user,key.type);
         }
 
     } else {
@@ -244,20 +181,27 @@ Com_Zimbra_PGP.prototype._searchBtnListener = function(obj){
     }
 };
 
-Com_Zimbra_PGP.prototype.successBar = function(id,user){
-   //alert('Called successBar().');
-   alert('Success for keyid: ' + id + ' and user ' + user + '. Yay!');
+Com_Zimbra_PGP.prototype.successBar = function(id,user,type){
+    document.getElementById('infoBar').className = 'success';
+    user = user.replace('<','&lt;').replace('>','&gt;');
+    successMsg = "Message signed with <strong>" + type + "</strong> keyid : <strong>" + id + "</strong> and user : <strong>" + user + "</strong> verified successfully!";
+    document.getElementById('infoBarMiddle').innerHTML = successMsg;
+
+    alert('Success for keyid: ' + id + ' and user ' + user + '. Yay!');
 };
 
-Com_Zimbra_PGP.prototype.failBar = function(id,user){
-   //alert('Called failBar().');
-   alert('Failed for keyid: ' + id + ' and user ' + user + '. Nooo!');
+Com_Zimbra_PGP.prototype.failBar = function(id,user,type){
+    document.getElementById('infoBar').className = 'fail';
+    user = user.replace('<','&lt;').replace('>','&gt;');
+    failMsg = "Message signed with <strong>" + type + "</strong> keyid : <strong>" + id + "</strong> and user : <strong>" + user + "</strong> verified successfully!";
+    document.getElementById('infoBarMiddle').innerHTML = failMsg;
+    alert('Failed for keyid: ' + id + ' and user ' + user + '. Nooo!');
 };
 
 Com_Zimbra_PGP.prototype.errDialog = function(msg){
         //alert('Called errDialog().');
         // Get refrence to our DWT object
-        this._errDialog = appCtxt.appCtxt.getErrorDialog(); 
+        this._errDialog = appCtxt.getErrorDialog(); 
         // Set the style to critical
         var style = DwtMessageDialog.CRITICAL_STYLE;
         // Set the listener callback to just pop down the message
