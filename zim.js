@@ -121,7 +121,7 @@ Com_Zimbra_PGP.prototype.searchForKey = function() {
             this.removeFromCache(this._infoDiv.sigObj.keyid);
             this.askSearch(); 
         }
-        this.verifyMsg(keytext);
+        this.msgVerify(keytext);
     // Otherwise, ask about going online
     } else {   
         this.askSearch(); 
