@@ -2,35 +2,49 @@
    border: 1px solid grey; 
    position: relative; 
    overflow: hidden; 
-   width: 100%; 
+   width: 99.9%; 
+   height:37px
 } 
 #infoBarLeft{ 
+   color: black; 
+   display: block; 
+   float: left; 
    padding: 8px 0px; 
    position:relative; 
    font-size: 15px; 
-   color: black; 
-   float: left; 
    width: 15%; 
-   display: block; 
-   text-align:center 
+   height: 100%;
+   text-align: center;
 } 
 #infoBarMiddle { 
-   padding: 8px 0px; 
-   font-size: 15px; 
    color: black; 
+   display: block; 
    float: left; 
-   display: block; 
-   width: 75%; 
-   text-align:center; 
-} 
-#infoBarButton { 
-   padding: 5px 0px; 
    font-size: 15px; 
+   height: 100%;
+   padding: 8px 0px; 
+   text-align:center; 
+   width: 75%; 
+} 
+#infoBarVerifyButton { 
    color: black; 
-   float: right; 
    display: block; 
-   width:9%; 
-   text-align:center 
+   float: right; 
+   font-size: 15px;  
+   height: 100%;
+   padding: 5px 0px; 
+   text-align:center; 
+   width:7%; 
+} 
+#infoBarEscapeButton { 
+   color: black; 
+   display: block; 
+   float: right; 
+   font-size: 15px; 
+   height: 100%;
+   padding: 7px 10px 0px 0px;
+   text-align:center;
+   width:2%; 
 } 
 
 .unsure {
@@ -45,10 +59,11 @@
    background-color: #b4ff80; 
 }
 
-a.myButton { 
+a.verifyButton { 
    color: #666666; 
 } 
-.myButton { 
+
+.verifyButton { 
    background-color:#f9f9f9; 
    -moz-border-radius:7px; 
    -webkit-border-radius:7px; 
@@ -65,12 +80,12 @@ a.myButton {
    text-decoration:none; 
 }
 
-.myButton:hover { 
+.verifyButton:hover { 
    background-color:#e9e9e9; 
    text-decoration:none; 
 } 
 
-.myButton:active { 
+.verifyButton:active { 
    position:relative; 
    top:1px; 
    text-decoration:none; 
@@ -84,5 +99,42 @@ a.myButton {
 #keyEntryTextarea {
     width:100%;
 	 height:100%;
+}
+
+a.escapeButton { 
+   color: #666666; 
+} 
+.escapeButton {
+   float:right;
+	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	box-shadow:inset 0px 1px 0px 0px #ffffff;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #f9f9f9), color-stop(1, #e9e9e9) );
+	background:-moz-linear-gradient( center top, #f9f9f9 5%, #e9e9e9 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#e9e9e9');
+	background-color:#f9f9f9;
+	-moz-border-radius:42px;
+	-webkit-border-radius:42px;
+	border-radius:42px;
+	border:1px solid #dcdcdc;
+	display:inline-block;
+	color:#666666;
+	font-family:arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:0px 5px;
+	text-decoration:none;
+}
+.escapeButton:hover {
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #e9e9e9), color-stop(1, #f9f9f9) );
+	background:-moz-linear-gradient( center top, #e9e9e9 5%, #f9f9f9 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e9e9e9', endColorstr='#f9f9f9');
+	background-color:#e9e9e9;
+	text-decoration:none;
+}
+.escapeButton:active {
+	position:relative;
+	top:1px;
+	text-decoration:none;
 }
 

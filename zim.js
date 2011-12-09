@@ -81,8 +81,11 @@ Com_Zimbra_PGP.prototype.infoBar = function() {
                  '<div id="infoBarMiddle">' +
                    'This message is signed with the ' + this._infoDiv.sigObj.algorithm + ' algorithm! Would you like to verify it\'s signature?' +
                  '</div>' +
-                 '<div id="infoBarButton">' +
-                   '<a class="myButton" href="javascript:void(0)" onclick="Com_Zimbra_PGP.prototype.searchForKey()">Verify!</a>' +
+                 '<div id="infoBarVerifyButton">' +
+                   '<a class="verifyButton" href="javascript:void(0)" onclick="Com_Zimbra_PGP.prototype.searchForKey()">Verify!</a>' +
+                 '</div>' +
+                 '<div id="infoBarEscapeButton">' +
+                   '<a class="escapeButton" href="javascript:void(0)" onclick="Com_Zimbra_PGP.prototype.destroyInfoBar()" >X</a>' +
                  '</div>' +
                '</div>';
     // Make the bar visible
@@ -92,7 +95,6 @@ Com_Zimbra_PGP.prototype.infoBar = function() {
 /*
 ===== Destroys the info bar =====
 */
-
 Com_Zimbra_PGP.prototype.destroyInfoBar = function() {
     // Find our infoDiv
     this._infoDiv = document.getElementById(appCtxt.getCurrentView()._msgView._infoBarId);
@@ -332,7 +334,6 @@ Com_Zimbra_PGP.prototype.msgVerify = function(keytext){
 /*
 ===== This is the function responsible for the drawing of the manual key entry stuff =====
 */
-
 Com_Zimbra_PGP.prototype.manualKeyEntry = function(){
     HTML = '<div id="keyEntryDiv">' +
 	           '<textarea id="keyEntryTextarea"></textarea>' +
