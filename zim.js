@@ -4,7 +4,6 @@ This file is responsible for all the Zimbra integration functions and everything
 else that's done in the zimbra interface
 
 TODO:
-     => Implement StorageObjects to prevent hitting the bejesus out of pgp.mit.edu
      => Integrate manual key entry
      => Button that links to my Github
 */
@@ -79,7 +78,7 @@ Com_Zimbra_PGP.prototype.infoBar = function() {
                    'ZimbraPGP' +
                  '</div>' +
                  '<div id="infoBarMiddle">' +
-                   'This message is signed with the ' + this._infoDiv.sigObj.algorithm + ' algorithm! Would you like to verify it\'s signature?' +
+                   'This message is signed with a ' + this._infoDiv.sigObj.algorithm + '-' + this._infoDiv.sigObj.keyLength + ' key! Would you like to verify it\'s signature?' +
                  '</div>' +
                  '<div id="infoBarVerifyButton">' +
                    '<a class="verifyButton" href="javascript:void(0)" onclick="Com_Zimbra_PGP.prototype.searchForKey()">Verify!</a>' +
@@ -153,6 +152,46 @@ Com_Zimbra_PGP.prototype.isInCache = function(keyid) {
             } 
         }
         return false;        
+    }        
+};
+
+Com_Zimbra_PGP.prototype.allKeysInCache = function() {
+    // If we have the necessary localStorage object
+    if(this._HTML5) {
+        // Loop over everything in the cache and
+        pgpKeys = {};
+        for (p=0;p<localStorage.length;p++) {
+	        var keyObj = new publicKey(unescape(localStorage.getItem(localStorage.key(p))));
+            if (keyObj.type == "DSA") {
+                var keyLength = keyObj.dsaG.toString(16).length * 4;
+            } else if (keyObj.type == "RSA") {
+                var keyLength = keyObj.rsaN.toString(16).length * 4;
+            }
+	        pgpKeys[keyObj.id] = keyObj.type + "_" + keyLength + "_" + keyObj.user;
+        }
+    // Or if HTML5's localStorage isn't availble
+    } else {
+        var cookies = document.cookie.split(';');        
+        var pgpCookies = new Array();       
+        for (i=0;i<cookies.length;i++) { 
+            // Populate our pgpCookies array with the pointers to the cookies we want
+            if (cookies[i].indexOf('ZimbraPGP_') != -1) {
+                pgpCookies.push(i);
+            }
+        }
+        pgpKeys = new Object();
+        // For each pgpCookie
+        for (i=0;i<pgpCookies.length;i++) {     
+            if (cookies[pgpCookies[i]].trim().split('=')[0] === "ZimbraPGP_" + keyid) {
+                var keyObj = new publicKey(unescape(unescape(cookies[1].trim().split('=')[1])));
+                if (keyObj.type == "DSA") {
+                    var keyLength = keyObj.dsaG.toString(16).length * 4;
+                } else if (keyObj.type == "RSA") {
+                    var keyLength = keyObj.rsaN.toString(16).length * 4;
+                }
+	            pgpKeys[keyObj.id] = keyObj.type + "_" + keyLength + "_" + keyObj.user;
+            }
+        }  
     }        
 };
 
@@ -280,8 +319,31 @@ Com_Zimbra_PGP.prototype._searchBtnListener = function(obj){
     } else {
         // If no key was found, error out and display the problem. 
         // Will update so manual key entry is possible later. 
-        this.errDialog("Can not find key on pgp.mit.edu! Cannot proceed!");
+        this.askManualEntry();
     }
+};
+
+/*
+===== This asks about entering a key in manually, and stores it in the cache =====
+*/
+Com_Zimbra_PGP.prototype.askManualEntry = function(obj){
+    // Get our new DWT widget window refrence
+    this._dialog = appCtxt.getYesNoMsgDialog(); 
+    // Message
+    var errMsg = "Could not find the key on pgp.mit.edu, enter it manually?";
+    // Just a warning, not critical 
+    var style = DwtMessageDialog.INFO_STYLE;
+
+    // set the button listeners up to the proper callbacks
+    this._dialog.setButtonListener(DwtDialog.YES_BUTTON, new AjxListener(this, this.manualKeyEntry));
+    this._dialog.setButtonListener(DwtDialog.NO_BUTTON, new AjxListener(this, this._clrBtnListener)); 
+
+    // Reset state to a known state
+    this._dialog.reset();
+    // Pop in the message
+    this._dialog.setMessage(errMsg,style);
+    // and pop it up!
+    this._dialog.popup();
 };
 
 /*
@@ -402,7 +464,16 @@ Com_Zimbra_PGP.prototype._clrBtnListener = function(){
 
 Com_Zimbra_PGP.prototype._readKeyListener = function(){
     // Get our key pasted in, and clear our the entry in the DOM
-    key = document.getElementById('keyEntryTextarea').value;
+    var pgpKey = document.getElementById('keyEntryTextarea').value;
     document.getElementById('keyEntryTextarea').value = "";
+
+    var tmp_key = new publicKey(pgpKey);
+    if (tmp_key.err != undefined) {
+        this.errDialog("Invalid key supplied.");
+    } else if (tmp_key.id.toUpperCase() == pgpKey.id.toUpperCase()) {
+        this.storeInCache(tmp_key.id,pgpKey);
+    } else {
+        this.errDialog("Key ID's do not match! <br>Inline : " + this._infoDiv.sigObj.keyid + "<br>Provided : " + tmp_key.id);
+    }
     this._dialog.popdown();
 };

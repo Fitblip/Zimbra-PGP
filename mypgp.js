@@ -196,6 +196,7 @@ function parseSig(text) {
                 this.algorithm = 'DSA';
                 this.dsaR = new BigInteger(a['r'].toString(),16)
                 this.dsaS = new BigInteger(a['s'].toString(),16)
+                this.keyLength = this.dsaR.toString(16).length * 32;
 			// RSA
             } else if (sigtype == 01) {
                 a = {};
@@ -209,6 +210,7 @@ function parseSig(text) {
                 i += (size +1) 
                 this.algorithm = 'RSA';
                 this.rsaZ = new BigInteger(a['z'].toString(),16)
+                this.keyLength = this.rsaZ.toString(16).length * 4;
             } else {
                 //error
             }
