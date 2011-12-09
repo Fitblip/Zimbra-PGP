@@ -38,14 +38,14 @@ function dec2hex(d) {
 
 // Parses out our email text properly into a format primed for hashing
 function parseText(text) {
-    var stuffs = text;
+    var stuffs = text.replace(/\r/g,'');
 
     // Split everything on newlines into an array
     stuffs = stuffs.split('\n')
 
     // Find our hashing algorithm
     for (i=0;i<stuffs.length;i++) {
-        if ( stuffs[i].search(/^Hash.*$/) != -1) {
+        if (stuffs[i].search(/^Hash.*$/) != -1) {
             start = i
         }
     }
@@ -79,7 +79,7 @@ function parseText(text) {
 
 // Parse out the signature part of our message for concatination with our msg text
 function parseSig(text) {
-    var stuffs = text;
+    var stuffs = text.replace(/\r/g,'');
     stuffs = stuffs.replace(/^Version.*\n$/m, '');
     start  = stuffs.indexOf('-----BEGIN PGP SIGNATURE-----\n\n') + 31;
     end    = stuffs.search(/\n=.*\n-----END PGP SIGNATURE-----$/);
