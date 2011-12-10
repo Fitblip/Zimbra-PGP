@@ -485,6 +485,7 @@ Com_Zimbra_PGP.prototype._readKeyListener = function(){
         this._dialog.reset();
         this._dialog.setMessage(msgText,style);
         this._dialog.popup();
+        this.msgVerify(pgpKey);
     } else {
         this.errDialog("Key ID's do not match! <br>Inline : " + this._infoDiv.sigObj.keyid + "<br>Provided : " + tmp_key.id.toLowerCase());
     }
