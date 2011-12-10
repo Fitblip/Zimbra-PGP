@@ -78,7 +78,7 @@ Com_Zimbra_PGP.prototype.infoBar = function() {
                    'ZimbraPGP' +
                  '</div>' +
                  '<div id="infoBarMiddle">' +
-                   'This message is signed with a ' + this._infoDiv.sigObj.algorithm + '-' + this._infoDiv.sigObj.keyLength + ' key! Would you like to verify it\'s signature?' +
+                   'This message is signed with a ' + this._infoDiv.sigObj.algorithm + ' key! Would you like to verify it\'s signature?' +
                  '</div>' +
                  '<div id="infoBarVerifyButton">' +
                    '<a class="verifyButton" href="javascript:void(0)" onclick="Com_Zimbra_PGP.prototype.searchForKey()">Verify!</a>' +
@@ -399,7 +399,7 @@ Com_Zimbra_PGP.prototype.msgVerify = function(keytext){
 ===== This is the function responsible for the drawing of the manual key entry stuff =====
 */
 Com_Zimbra_PGP.prototype.manualKeyEntry = function(){
-    this._dialog.popup();
+    this._dialog.popdown();
     HTML = '<div id="keyEntryDiv">' +
 	           '<textarea id="keyEntryTextarea"></textarea>' +
 	       '</div>';
@@ -466,26 +466,26 @@ Com_Zimbra_PGP.prototype._clrBtnListener = function(){
 };
 
 Com_Zimbra_PGP.prototype._readKeyListener = function(){
+    this._infoDiv = document.getElementById(appCtxt.getCurrentView()._msgView._infoBarId);
     this._dialog.popdown();
     // Get our key pasted in, and clear our the entry in the DOM
     var pgpKey = document.getElementById('keyEntryTextarea').value;
     document.getElementById('keyEntryTextarea').value = "";
-
     var tmp_key = new publicKey(pgpKey);
     if (tmp_key.err) {
         this.errDialog("Invalid key supplied.");
     } else if (tmp_key.id.toUpperCase() == this._infoDiv.sigObj.keyid.toUpperCase()) {
         // Store in cache
-        this.storeInCache(tmp_key.id,pgpKey);
+        this.storeInCache(tmp_key.id.toLowerCase(),pgpKey);
         // Pop up success message
         this._dialog = appCtxt.getMsgDialog(); 
-        var msgText = "Keyid " + tmp_key.id + " added successfully!";
+        var msgText = "Keyid " + tmp_key.id.toLowerCase() + " added successfully!";
         var style = DwtMessageDialog.INFO_STYLE;
         this._dialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._clrBtnListener)); 
         this._dialog.reset();
         this._dialog.setMessage(msgText,style);
         this._dialog.popup();
     } else {
-        this.errDialog("Key ID's do not match! <br>Inline : " + this._infoDiv.sigObj.keyid + "<br>Provided : " + tmp_key.id);
+        this.errDialog("Key ID's do not match! <br>Inline : " + this._infoDiv.sigObj.keyid + "<br>Provided : " + tmp_key.id.toLowerCase());
     }
 };
