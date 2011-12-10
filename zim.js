@@ -115,7 +115,7 @@ Com_Zimbra_PGP.prototype.searchForKey = function() {
     
     // If this key is found in the cache
     if (this.isInCache(this._infoDiv.sigObj.keyid)) {
-        keytext = this.getFromCache(this._infoDiv.sigObj.keyid);
+        keytext = this.getFromCache(this._infoDiv.sigObj.keyid); //TODO Bug?
         // Some error checking for good measure
         if (!keytext) {
             this.errDialog('Cache lookup failed! Corrupted keys? Falling back to caching from the internet.');
@@ -184,8 +184,8 @@ Com_Zimbra_PGP.prototype.allKeysInCache = function() {
         pgpKeys = new Object();
         // For each pgpCookie
         for (i=0;i<pgpCookies.length;i++) {     
-            if (cookies[pgpCookies[i]].trim().split('=')[0] === "ZimbraPGP_" + keyid) {
-                keyObj = new publicKey(unescape(unescape(cookies[1].trim().split('=')[1])));
+            if (cookies[pgpCookies[i]].replace(/^\s/,'').split('=')[0] === "ZimbraPGP_" + keyid) {
+                keyObj = new publicKey(unescape(unescape(cookies[1].replace(/^\s/,'').split('=')[1])));
                 if (keyObj.type == "DSA") {
                     keyLength = keyObj.dsaG.toString(16).length * 4;
                 } else if (keyObj.type == "RSA") {
@@ -226,9 +226,9 @@ Com_Zimbra_PGP.prototype.getFromCache = function(keyid) {
         }
         // For each PGP cookie
         for (i=0;i<pgpCookies.length;i++) {     
-            if (cookies[pgpCookies[i]].trim().split('=')[0] === "ZimbraPGP_" + keyid) {
+            if (cookies[pgpCookies[i]]..replace(/^\s/,'').split('=')[0] === "ZimbraPGP_" + keyid) {
                 // Delicious cookies
-                keytext = unescape(cookies[pgpCookies[i]].trim().split('=')[1]);
+                keytext = unescape(cookies[pgpCookies[i]].replace(/^\s/,'').split('=')[1]);
                 return keytext;
             }
         }
@@ -264,7 +264,7 @@ Com_Zimbra_PGP.prototype.removeFromCache = function(keyid) {
 
         // For each PGP cookie
         for (i=0;i<pgpCookies.length;i++) {     
-            if (cookies[pgpCookies[i]].trim().split('=')[0] === "ZimbraPGP_" + keyid) {
+            if (cookies[pgpCookies[i]].replace(/^\s/,'').split('=')[0] === "ZimbraPGP_" + keyid) {
                 // Expire that thang!
                 document.cookie = "ZimbraPGP_" + keyid + '=ThisDoesntMatterAnymore; expires=Thu Jan 01 1970 00:00:01 GMT-0500 (EST)';
             }
