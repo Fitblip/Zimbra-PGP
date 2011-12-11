@@ -2,30 +2,41 @@
    border: 1px solid grey; 
    position: relative; 
    overflow: hidden; 
-   width: auto; 
-   height: auto;  
-   margin: 0 auto;
+   width: 99.8%; 
+   float: left;
+   clear: left;
 } 
 #infoBarLeft{ 
    color: black; 
    display: block; 
    float: left; 
-   padding: 8px 10px 0px 10px; 
+   padding: 0px; 
    position:relative; 
    font-size: 15px; 
-   width: auto; 
+   width: 85%; 
    height: auto;
    text-align: center;
 } 
-#infoBarMiddle { 
+#infoBarMsg { 
+   color: black; 
+   display: block; 
+   float: right; 
+   font-size: 15px; 
+   height: auto;
+   margin: 10px 0px; 
+   text-align:center; 
+   width: 85%; 
+} 
+#infoBarLogo{ 
    color: black; 
    display: block; 
    float: left; 
+   padding: 8px 0px 0px 10px; 
+   position:relative; 
    font-size: 15px; 
+   width: 12%; 
    height: auto;
-   padding: 8px 0px; 
-   text-align:center; 
-   width: 75%; 
+   text-align: center;
 } 
 #infoBarRight{ 
    color: black; 
@@ -33,7 +44,7 @@
    float: right; 
    position:relative; 
    font-size: 15px; 
-   width: auto; 
+   width: 110px; 
    height: auto;
    text-align: center;
 } 

@@ -72,21 +72,23 @@ Com_Zimbra_PGP.prototype.infoBar = function() {
     this._infoDiv.txtObj = new parseText(msgText.getTextPart());
 
     // Inject HTML into the infobar section 
-    var HTML = '<div id="infoBar" class="unsure" height="100px">' +
+    var HTML = '<div id="infoBar" class="unsure">' +
                  '<div id="infoBarLeft">' +
                    // TODO: button that links to my github
-                   'ZimbraPGP' +
-                 '</div>' +
-                 '<div id="infoBarMiddle">' +
-                   'This message is signed with a ' + this._infoDiv.sigObj.algorithm + ' key! Would you like to verify it\'s signature?' +
+									 '<div id="infoBarLogo">' +
+                 	   'ZimbraPGP' +
+                 	 '</div>' +
+                   '<div id="infoBarMsg">' +
+                     'This message is signed with a ' + this._infoDiv.sigObj.algorithm + ' key! Would you like to verify it\'s signature?' +
+                   '</div>' +
                  '</div>' +
                  '<div id="infoBarRight">' +
-                 '<div id="infoBarVerifyButton">' +
-                   '<a class="verifyButton" href="javascript:void(0)" onclick="Com_Zimbra_PGP.prototype.searchForKey()">Verify!</a>' +
-                 '</div>' +
-                 '<div id="infoBarEscapeButton">' +
-                   '<a class="escapeButton" href="javascript:void(0)" onclick="Com_Zimbra_PGP.prototype.destroyInfoBar()" >X</a>' +
-                 '</div>' +
+                   '<div id="infoBarVerifyButton">' +
+                     '<a class="verifyButton" href="javascript:void(0)" onclick="Com_Zimbra_PGP.prototype.searchForKey()">Verify!</a>' +
+                   '</div>' +
+                   '<div id="infoBarEscapeButton">' +
+                     '<a class="escapeButton" href="javascript:void(0)" onclick="Com_Zimbra_PGP.prototype.destroyInfoBar()" >X</a>' +
+                   '</div>' +
                  '</div>' +
                '</div>';
     // Make the bar visible
