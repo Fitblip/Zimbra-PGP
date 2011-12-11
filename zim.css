@@ -6,17 +6,6 @@
    float: left;
    clear: left;
 } 
-#infoBarLeft{ 
-   color: black; 
-   display: block; 
-   float: left; 
-   padding: 0px; 
-   position:relative; 
-   font-size: 15px; 
-   width: 85%; 
-   height: auto;
-   text-align: center;
-} 
 #infoBarMsg { 
    color: black; 
    display: block; 
@@ -35,16 +24,6 @@
    position:relative; 
    font-size: 15px; 
    width: 12%; 
-   height: auto;
-   text-align: center;
-} 
-#infoBarRight{ 
-   color: black; 
-   display: block; 
-   float: right; 
-   position:relative; 
-   font-size: 15px; 
-   width: 110px; 
    height: auto;
    text-align: center;
 } 
@@ -68,23 +47,18 @@
    text-align:center;
    width: auto; 
 } 
-
 .unsure {
    background-color: #efcc44; 
 }
-
 .fail {
    background-color: #f4512e; 
 }
-
 .success {
    background-color: #b4ff80; 
 }
-
 a.verifyButton { 
    color: #666666; 
 } 
-
 .verifyButton { 
    background-color:#f9f9f9; 
    -moz-border-radius:7px; 
@@ -101,28 +75,23 @@ a.verifyButton {
    text-shadow:1px 1px 0px #ffffff; 
    text-decoration:none; 
 }
-
 .verifyButton:hover { 
    background-color:#e9e9e9; 
    text-decoration:none; 
 } 
-
 .verifyButton:active { 
    position:relative; 
    top:1px; 
    text-decoration:none; 
 } 
-
 #keyEntryDiv {
     float:left;
     width:100%;
 }
-
 #keyEntryTextarea {
     width:100%;
 	 height:100%;
 }
-
 a.escapeButton { 
    color: #666666; 
 } 
@@ -159,4 +128,3 @@ a.escapeButton {
 	top:1px;
 	text-decoration:none;
 }
-
