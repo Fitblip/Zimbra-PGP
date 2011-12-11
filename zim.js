@@ -428,14 +428,14 @@ Com_Zimbra_PGP.prototype.successBar = function(id,user,type){
     document.getElementById('infoBar').className = 'success';
     user = user.replace('<','&lt;').replace('>','&gt;');
     successMsg = "Message signed with <strong>" + type + "</strong> keyid : <strong>" + id + "</strong> and user : <strong>" + user + "</strong> verified successfully!";
-    document.getElementById('infoBarMiddle').innerHTML = successMsg;
+    document.getElementById('infoBarMsg').innerHTML = successMsg;
 };
 
 Com_Zimbra_PGP.prototype.failBar = function(id,user,type){
     document.getElementById('infoBar').className = 'fail';
     user = user.replace('<','&lt;').replace('>','&gt;');
     failMsg = "Message signed with <strong>" + type + "</strong> keyid : <strong>" + id + "</strong> and user : <strong>" + user + " *NOT*</strong> verified!";
-    document.getElementById('infoBarMiddle').innerHTML = failMsg;
+    document.getElementById('infoBarMsg').innerHTML = failMsg;
 };
 
 /*
