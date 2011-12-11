@@ -80,11 +80,13 @@ Com_Zimbra_PGP.prototype.infoBar = function() {
                  '<div id="infoBarMiddle">' +
                    'This message is signed with a ' + this._infoDiv.sigObj.algorithm + ' key! Would you like to verify it\'s signature?' +
                  '</div>' +
+                 '<div id="infoBarRight">' +
                  '<div id="infoBarVerifyButton">' +
                    '<a class="verifyButton" href="javascript:void(0)" onclick="Com_Zimbra_PGP.prototype.searchForKey()">Verify!</a>' +
                  '</div>' +
                  '<div id="infoBarEscapeButton">' +
                    '<a class="escapeButton" href="javascript:void(0)" onclick="Com_Zimbra_PGP.prototype.destroyInfoBar()" >X</a>' +
+                 '</div>' +
                  '</div>' +
                '</div>';
     // Make the bar visible
@@ -226,7 +228,7 @@ Com_Zimbra_PGP.prototype.getFromCache = function(keyid) {
         }
         // For each PGP cookie
         for (i=0;i<pgpCookies.length;i++) {     
-            if (cookies[pgpCookies[i]]..replace(/^\s/,'').split('=')[0] === "ZimbraPGP_" + keyid) {
+            if (cookies[pgpCookies[i]].replace(/^\s/,'').split('=')[0] === "ZimbraPGP_" + keyid) {
                 // Delicious cookies
                 keytext = unescape(cookies[pgpCookies[i]].replace(/^\s/,'').split('=')[1]);
                 return keytext;

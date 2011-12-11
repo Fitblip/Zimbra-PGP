@@ -2,18 +2,19 @@
    border: 1px solid grey; 
    position: relative; 
    overflow: hidden; 
-   width: 99.9%; 
-   height:37px
+   width: auto; 
+   height: auto;  
+   margin: 0 auto;
 } 
 #infoBarLeft{ 
    color: black; 
    display: block; 
    float: left; 
-   padding: 8px 0px; 
+   padding: 8px 10px 0px 10px; 
    position:relative; 
    font-size: 15px; 
-   width: 15%; 
-   height: 100%;
+   width: auto; 
+   height: auto;
    text-align: center;
 } 
 #infoBarMiddle { 
@@ -21,30 +22,40 @@
    display: block; 
    float: left; 
    font-size: 15px; 
-   height: 100%;
+   height: auto;
    padding: 8px 0px; 
    text-align:center; 
    width: 75%; 
+} 
+#infoBarRight{ 
+   color: black; 
+   display: block; 
+   float: right; 
+   position:relative; 
+   font-size: 15px; 
+   width: auto; 
+   height: auto;
+   text-align: center;
 } 
 #infoBarVerifyButton { 
    color: black; 
    display: block; 
    float: left; 
    font-size: 15px;  
-   height: 100%;
-   padding: 5px 0px; 
+   height: auto;
+   padding: 5px 10px 5px 0px; 
    text-align:center; 
-   width:7%; 
+   width: auto; 
 } 
 #infoBarEscapeButton { 
    color: black; 
    display: block; 
    float: right; 
    font-size: 15px; 
-   height: 100%;
+   height: auto;
    padding: 7px 10px 0px 0px;
    text-align:center;
-   width:2%; 
+   width: auto; 
 } 
 
 .unsure {
