@@ -4,7 +4,6 @@ This file is responsible for all the Zimbra integration functions and everything
 else that's done in the zimbra interface
 
 TODO:
-     => Integrate manual key entry
      => Button that links to my Github
 */
 
@@ -62,7 +61,7 @@ Com_Zimbra_PGP.prototype.match = function(line, startIndex) {
 ===== Draws our initial info bar with the proper signature algorithm =====
 */
 Com_Zimbra_PGP.prototype.infoBar = function() {
-    // Find the message that we're clicked on. TODO: This is a legacy way (apparently...)
+    // Find the message that we're clicked on.
     var msgText = appCtxt.getCurrentView().getSelection()[0].getFirstHotMsg();
     // Find our infoDiv
     this._infoDiv = document.getElementById(appCtxt.getCurrentView()._msgView._infoBarId);
@@ -81,7 +80,7 @@ Com_Zimbra_PGP.prototype.infoBar = function() {
 							'ZimbraPGP' +
 						'</div>' +
 					'</td>' +
-					'<td style="text-align: center;">' +
+					'<td style="text-align: center; width=80%;">' +
 						'<div id="infoBarMsg">' +
 					     'This message is signed with a ' + this._infoDiv.sigObj.algorithm + ' key! Would you like to verify it\'s signature?' +
 						'</div>' +
@@ -128,7 +127,7 @@ Com_Zimbra_PGP.prototype.searchForKey = function() {
     
     // If this key is found in the cache
     if (this.isInCache(this._infoDiv.sigObj.keyid)) {
-        keytext = this.getFromCache(this._infoDiv.sigObj.keyid); //TODO Bug?
+        keytext = this.getFromCache(this._infoDiv.sigObj.keyid); // TODO FF7 Bug?
         // Some error checking for good measure
         if (!keytext) {
             this.errDialog('Cache lookup failed! Corrupted keys? Falling back to caching from the internet.');

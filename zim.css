@@ -2,48 +2,40 @@
    border: 1px solid grey; 
    position: relative; 
    overflow: hidden; 
-   width: 99.8%; 
+   width: 100%; 
    float: left;
    clear: left;
 } 
 #infoBarMsg { 
    color: black; 
    display: block; 
-   float: right; 
    font-size: 15px; 
    height: auto;
-   margin: 10px 0px; 
+   width: auto; 
    text-align:center; 
-   width: 85%; 
 } 
 #infoBarLogo{ 
    color: black; 
-   display: block; 
-   float: left; 
-   padding: 8px 0px 0px 10px; 
+   display: block;  
    position:relative; 
    font-size: 15px; 
-   width: 12%; 
+   width: auto; 
    height: auto;
    text-align: center;
 } 
 #infoBarVerifyButton { 
    color: black; 
    display: block; 
-   float: left; 
    font-size: 15px;  
    height: auto;
-   padding: 5px 10px 5px 0px; 
    text-align:center; 
    width: auto; 
 } 
 #infoBarEscapeButton { 
    color: black; 
    display: block; 
-   float: right; 
    font-size: 15px; 
    height: auto;
-   padding: 7px 10px 0px 0px;
    text-align:center;
    width: auto; 
 } 
@@ -96,7 +88,6 @@ a.escapeButton {
    color: #666666; 
 } 
 .escapeButton {
-   float:right;
 	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
 	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
 	box-shadow:inset 0px 1px 0px 0px #ffffff;
