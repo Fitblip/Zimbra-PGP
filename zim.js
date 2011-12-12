@@ -42,19 +42,19 @@ Com_Zimbra_PGP.prototype.init = function() {
                 ======================
 */
 Com_Zimbra_PGP.prototype.match = function(line, startIndex) {
-    var ret = null;
     var header = false;
     var sig = false;
-    if (line.search(/-----BEGIN PGP SIGNED MESSAGE-----/) != -1) {
+    var h1 = /-----BEGIN PGP SIGNED MESSAGE-----/;
+    var h2 = /-----BEGIN PGP SIGNATURE-----/;
+    if (h1.test(line)) {
         header = true;
     }
-    if (header && line.search(/-----BEGIN PGP SIGNATURE-----/)) {
+    if (header && h2.test(line)) {
         sig = true; 
     }
     if (header && sig) {
         this.infoBar();
     }
-    return ret;
 };
 
 /*
@@ -62,7 +62,7 @@ Com_Zimbra_PGP.prototype.match = function(line, startIndex) {
 */
 Com_Zimbra_PGP.prototype.infoBar = function() {
     // Find the message that we're clicked on.
-    var msgText = appCtxt.getCurrentView().getSelection()[0].getFirstHotMsg();
+    var msgText = appCtxt.getCurrentView()._msgView._msg.getBodyPart().content;
     // Find our infoDiv
     this._infoDiv = document.getElementById(appCtxt.getCurrentView()._msgView._infoBarId);
 
@@ -80,7 +80,7 @@ Com_Zimbra_PGP.prototype.infoBar = function() {
 							'ZimbraPGP' +
 						'</div>' +
 					'</td>' +
-					'<td style="text-align: center; width=80%;">' +
+					'<td style="text-align: center; width:80%;">' +
 						'<div id="infoBarMsg">' +
 					     'This message is signed with a ' + this._infoDiv.sigObj.algorithm + ' key! Would you like to verify it\'s signature?' +
 						'</div>' +
