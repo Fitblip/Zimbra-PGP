@@ -5,6 +5,7 @@ else that's done in the zimbra interface
 
 TODO:
      => Button that links to my Github
+	 => Possibly cache already verified messages and they info in sessionStorage()?
 */
 
 /*
@@ -43,32 +44,28 @@ Com_Zimbra_PGP.prototype.init = function() {
 */
 Com_Zimbra_PGP.prototype.match = function(line, startIndex) {
     var header = false;
-    var sig = false;
-    var h1 = /-----BEGIN PGP SIGNED MESSAGE-----/;
-    var h2 = /-----BEGIN PGP SIGNATURE-----/;
-    if (h1.test(line)) {
+    if (line.search(/-----BEGIN PGP SIGNED MESSAGE-----/) != -1) {
         header = true;
     }
-    if (header && h2.test(line)) {
-        sig = true; 
-    }
-    if (header && sig) {
+    if (header) {
         this.infoBar();
     }
+    return null;
 };
+
 
 /*
 ===== Draws our initial info bar with the proper signature algorithm =====
 */
 Com_Zimbra_PGP.prototype.infoBar = function() {
     // Find the message that we're clicked on.
-    var msgText = appCtxt.getCurrentView()._msgView._msg.getBodyPart().content;
+    var msgText = appCtxt.getCurrentView()._msgView._msg.getBodyPart();
     // Find our infoDiv
     this._infoDiv = document.getElementById(appCtxt.getCurrentView()._msgView._infoBarId);
 
     // Parse out our signature stuff and message text
-    this._infoDiv.sigObj = new parseSig(msgText.getTextPart());
-    this._infoDiv.txtObj = new parseText(msgText.getTextPart());
+    this._infoDiv.sigObj = new parseSig(msgText.content);
+    this._infoDiv.txtObj = new parseText(msgText.content);
 
     // Inject HTML into the infobar section 
     var HTML = '' +
