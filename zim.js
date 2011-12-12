@@ -58,46 +58,90 @@ Com_Zimbra_PGP.prototype.match = function(line, startIndex) {
 ===== Draws our initial info bar with the proper signature algorithm =====
 */
 Com_Zimbra_PGP.prototype.infoBar = function() {
-    // Find the message that we're clicked on.
-    var msgText = appCtxt.getCurrentView()._msgView._msg.getBodyPart();
-    // Find our infoDiv
-    this._infoDiv = document.getElementById(appCtxt.getCurrentView()._msgView._infoBarId);
+	// Determine if we have HTML5 or not
+    if (typeof(window['localStorage']) == "object") {
+        window._HTML5 = true;
+    } else {
+        window._HTML5 = false;
+    }
+	// Find our infoDiv
+	this._infoDiv = document.getElementById(appCtxt.getCurrentView()._msgView._infoBarId);
+	if (this.alreadyVerified(appCtxt.getCurrentView()._msgView._msg.id)) {
+		var status;
+		var msgHTML = this.getFromTempCache(appCtxt.getCurrentView()._msgView._msg.id);
+		if (msgHTML.search('successfully') != -1) {
+			status = "success";
+		} else {
+			status = "fail";
+		}
+		var HTML = '' +
+			'<table id="infoBar" class="' + status + '" cellpadding="3" cellspacing="2">' +
+				'<tbody>' +
+					'<tr>' +
+						'<td style="text-align: center;">' +
+							'<div id="infoBarLogo">' +
+								'ZimbraPGP' +
+							'</div>' +
+						'</td>' +
+						'<td style="text-align: center; width:80%;">' +
+							'<div id="infoBarMsg">' +
+								msgHTML +
+							'</div>' +
+						'</td>' +
+						'<td style="text-align: center;">' +
+							'<div id="infoBarVerifyButton">' +
+								'<a class="verifyButton" href="javascript:void(0)">Verify!</a>' +
+							'</div>' +
+						'</td>' +
+						'<td style="text-align: center;">' +
+							'<div id="infoBarEscapeButton">' +
+								'<a class="escapeButton" href="javascript:void(0)" onclick="Com_Zimbra_PGP.prototype.destroyInfoBar()">X</a>' +
+							'</div>' +
+						'</td>' +
+					'</tr>' +
+				'</tbody>' +
+			'</table>';
+		this._infoDiv.innerHTML = HTML;
+	} else {	
+		// Find the message that we're clicked on.
+		var msgText = appCtxt.getCurrentView()._msgView._msg.getBodyPart();
 
-    // Parse out our signature stuff and message text
-    this._infoDiv.sigObj = new parseSig(msgText.content);
-    this._infoDiv.txtObj = new parseText(msgText.content);
+		// Parse out our signature stuff and message text
+		this._infoDiv.sigObj = new parseSig(msgText.content);
+		this._infoDiv.txtObj = new parseText(msgText.content);
 
-    // Inject HTML into the infobar section 
-    var HTML = '' +
-		'<table id="infoBar" class="unsure" cellpadding="3" cellspacing="2">' +
-			'<tbody>' +
-				'<tr>' +
-					'<td style="text-align: center;">' +
-						'<div id="infoBarLogo">' +
-							'ZimbraPGP' +
-						'</div>' +
-					'</td>' +
-					'<td style="text-align: center; width:80%;">' +
-						'<div id="infoBarMsg">' +
-					     'This message is signed with a ' + this._infoDiv.sigObj.algorithm + ' key! Would you like to verify it\'s signature?' +
-						'</div>' +
-					'</td>' +
-					'<td style="text-align: center;">' +
-						'<div id="infoBarVerifyButton">' +
-							'<a class="verifyButton" href="javascript:void(0)" onclick="Com_Zimbra_PGP.prototype.searchForKey()">Verify!</a>' +
-						'</div>' +
-					'</td>' +
-					'<td style="text-align: center;">' +
-						'<div id="infoBarEscapeButton">' +
-							'<a class="escapeButton" href="javascript:void(0)" onclick="Com_Zimbra_PGP.prototype.destroyInfoBar()">X</a>' +
-						'</div>' +
-					'</td>' +
-				'</tr>' +
-			'</tbody>' +
-		'</table>';
+		// Inject HTML into the infobar section 
+		var HTML = '' +
+			'<table id="infoBar" class="unsure" cellpadding="3" cellspacing="2">' +
+				'<tbody>' +
+					'<tr>' +
+						'<td style="text-align: center;">' +
+							'<div id="infoBarLogo">' +
+								'ZimbraPGP' +
+							'</div>' +
+						'</td>' +
+						'<td style="text-align: center; width:80%;">' +
+							'<div id="infoBarMsg">' +
+							 'This message is signed with a ' + this._infoDiv.sigObj.algorithm + ' key! Would you like to verify it\'s signature?' +
+							'</div>' +
+						'</td>' +
+						'<td style="text-align: center;">' +
+							'<div id="infoBarVerifyButton">' +
+								'<a class="verifyButton" href="javascript:void(0)" onclick="Com_Zimbra_PGP.prototype.searchForKey()">Verify!</a>' +
+							'</div>' +
+						'</td>' +
+						'<td style="text-align: center;">' +
+							'<div id="infoBarEscapeButton">' +
+								'<a class="escapeButton" href="javascript:void(0)" onclick="Com_Zimbra_PGP.prototype.destroyInfoBar()">X</a>' +
+							'</div>' +
+						'</td>' +
+					'</tr>' +
+				'</tbody>' +
+			'</table>';
 
-	  // Make the bar visible
-    this._infoDiv.innerHTML = HTML;
+		  // Make the bar visible
+		this._infoDiv.innerHTML = HTML;
+	}
 };
 
 /*
@@ -109,18 +153,13 @@ Com_Zimbra_PGP.prototype.destroyInfoBar = function() {
     this._infoDiv.innerHTML = "";
 };
 
+
 /*
 ===== Searches cache for key, if not found, ask about going online =====
 */
 Com_Zimbra_PGP.prototype.searchForKey = function() {
     // Find our infoDiv
     this._infoDiv = document.getElementById(appCtxt.getCurrentView()._msgView._infoBarId);
-    // Check to see if we have the localStorage object availble
-    if (typeof(window['localStorage']) == "object") {
-        this._HTML5 = true;
-    } else {
-        this._HTML5 = false;
-    }
     
     // If this key is found in the cache
     if (this.isInCache(this._infoDiv.sigObj.keyid)) {
@@ -139,12 +178,12 @@ Com_Zimbra_PGP.prototype.searchForKey = function() {
 };
 
 /*
-===== Cache storage functions - Fallback to cookies if HTML5 is unavilible =====
+===== Perm. Cache storage functions - Fallback to cookies if HTML5 is unavilible =====
                         AKA: ....mmmmm abstraction
 */
 Com_Zimbra_PGP.prototype.isInCache = function(keyid) {
     // If we have the necessary localStorage object
-    if(this._HTML5) {
+    if(window._HTML5) {
         // If the keyid is found in the session cache
         if (localStorage.getItem(keyid)) {
             return true;
@@ -163,12 +202,11 @@ Com_Zimbra_PGP.prototype.isInCache = function(keyid) {
         return false;        
     }        
 };
-
 Com_Zimbra_PGP.prototype.allKeysInCache = function() {
     var keyObj = null;
     var keyLength = null;
     // If we have the necessary localStorage object
-    if(this._HTML5) {
+    if(window._HTML5) {
         // Loop over everything in the cache and
         pgpKeys = {};
         for (p=0;p<localStorage.length;p++) {
@@ -205,10 +243,9 @@ Com_Zimbra_PGP.prototype.allKeysInCache = function() {
         }  
     }        
 };
-
 Com_Zimbra_PGP.prototype.storeInCache = function(keyid,key) {
     // If we have the necessary localStorage object
-    if(this._HTML5) {
+    if(window._HTML5) {
         localStorage.setItem(keyid,escape(key));
     } else {
     //Set our cookies to expire in a year
@@ -218,10 +255,9 @@ Com_Zimbra_PGP.prototype.storeInCache = function(keyid,key) {
         document.cookie = 'ZimbraPGP_' + keyid +'='+ escapedKey + '; expires=' + rightNow.toUTCString();
     }
 };
-
 Com_Zimbra_PGP.prototype.getFromCache = function(keyid) {
     // If we have the necessary localStorage object
-    if(this._HTML5) {
+    if(window._HTML5) {
         keytext = unescape(localStorage.getItem(keyid));
         return keytext;
     } else {
@@ -244,10 +280,9 @@ Com_Zimbra_PGP.prototype.getFromCache = function(keyid) {
         return null;
     }    
 };
-
 Com_Zimbra_PGP.prototype.removeFromCache = function(keyid) {
     // If we have the necessary localStorage object
-    if(this._HTML5) {
+    if(window._HTML5) {
         // If our keyid == all, remove all keys in the cache.
         if (keyid === 'all') {
             localStorage.clear();
@@ -270,7 +305,6 @@ Com_Zimbra_PGP.prototype.removeFromCache = function(keyid) {
                 document.cookie = zimKeyid + '=ThisDoesntMatterAnymore; expires=Thu Jan 01 1970 00:00:01 GMT-0500 (EST)';
             }
         }
-
         // For each PGP cookie
         for (i=0;i<pgpCookies.length;i++) {     
             if (cookies[pgpCookies[i]].replace(/^\s/,'').split('=')[0] === "ZimbraPGP_" + keyid) {
@@ -278,6 +312,62 @@ Com_Zimbra_PGP.prototype.removeFromCache = function(keyid) {
                 document.cookie = "ZimbraPGP_" + keyid + '=ThisDoesntMatterAnymore; expires=Thu Jan 01 1970 00:00:01 GMT-0500 (EST)';
             }
         }
+    }    
+};
+
+/*
+===== Temp. Cache storage functions - Fallback to cookies if HTML5 is unavilible =====
+*/
+
+Com_Zimbra_PGP.prototype.alreadyVerified = function(msgId) {
+	if (window._HTML5) {
+		if (sessionStorage.getItem(msgId)) {
+            return true;
+        } else {
+            return false;
+        }
+	} else {
+		var cookies = document.cookie.split(';');
+        for (i=0;i<cookies.length;i++) { 
+            if (cookies[i].indexOf('PGPVerified_' + msgId) != -1) { 
+               return true;
+            } 
+        }
+        return false; 
+	}
+};
+Com_Zimbra_PGP.prototype.storeInTempCache = function(msgId,HTML) {
+    // If we have the necessary sessionStorage object
+    if(window._HTML5) {
+        sessionStorage.setItem(msgId,escape(HTML));
+    } else {
+    // By default cookies are all session
+        document.cookie = 'PGPVerified_' + msgId +'='+ escape(HTML)
+    }
+};
+Com_Zimbra_PGP.prototype.getFromTempCache = function(msgId) {
+    // If we have the necessary localStorage object
+    if(window._HTML5) {
+        msgHTML = unescape(sessionStorage.getItem(msgId));
+        return msgHTML;
+    } else {
+        var cookies = document.cookie.split(';');        
+        var pgpCookies = new Array();       
+        for (i=0;i<cookies.length;i++) { 
+            // Populate our pgpCookies array with the pointers to the cookies we want
+            if (cookies[i].indexOf('PGPVerified_') != -1) {
+                pgpCookies.push(i);
+            }
+        }
+        // For each PGP cookie
+        for (i=0;i<pgpCookies.length;i++) {     
+            if (cookies[pgpCookies[i]].replace(/^\s/,'').split('=')[0] === "PGPVerified_" + msgId) {
+                // Delicious cookies
+                msgHTML = unescape(cookies[pgpCookies[i]].replace(/^\s/,'').split('=')[1]);
+                return msgHTML;
+            }
+        }
+    	return null;
     }    
 };
 
@@ -434,6 +524,8 @@ Com_Zimbra_PGP.prototype.successBar = function(id,user,type){
     user = user.replace('<','&lt;').replace('>','&gt;');
     successMsg = "Message signed with <strong>" + type + "</strong> keyid : <strong>" + id + "</strong> and user : <strong>" + user + "</strong> verified successfully!";
     document.getElementById('infoBarMsg').innerHTML = successMsg;
+	msgId = appCtxt.getCurrentView()._msgView._msg.id
+	this.storeInTempCache(msgId,successMsg)
 };
 
 Com_Zimbra_PGP.prototype.failBar = function(id,user,type){
@@ -441,6 +533,8 @@ Com_Zimbra_PGP.prototype.failBar = function(id,user,type){
     user = user.replace('<','&lt;').replace('>','&gt;');
     failMsg = "Message signed with <strong>" + type + "</strong> keyid : <strong>" + id + "</strong> and user : <strong>" + user + " *NOT*</strong> verified!";
     document.getElementById('infoBarMsg').innerHTML = failMsg;
+	msgId = appCtxt.getCurrentView()._msgView._msg.id
+	this.storeInTempCache(msgId,failMsg)
 };
 
 /*
