@@ -426,6 +426,7 @@ function publicKey(key) {
                 }
                 this.rsasubN = new BigInteger(a['n'].toString(),16)
                 this.rsasubE = new BigInteger(a['e'].toString(),16)
+		// Stupid off-by-one errors!
                 i = i+1
                 
             // 16 == ElGamal
@@ -597,5 +598,3 @@ function publicKey(key) {
         }
     }  
 }
-
-

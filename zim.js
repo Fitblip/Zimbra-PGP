@@ -124,7 +124,7 @@ Com_Zimbra_PGP.prototype.searchForKey = function() {
     
     // If this key is found in the cache
     if (this.isInCache(this._infoDiv.sigObj.keyid)) {
-        keytext = this.getFromCache(this._infoDiv.sigObj.keyid); // TODO FF7 Bug?
+        keytext = this.getFromCache(this._infoDiv.sigObj.keyid);
         // Some error checking for good measure
         if (!keytext) {
             this.errDialog('Cache lookup failed! Corrupted keys? Falling back to caching from the internet.');
@@ -415,15 +415,15 @@ Com_Zimbra_PGP.prototype.manualKeyEntry = function(){
 
     var sDialogTitle = "<center>Enter in the public key and press \"OK\"</center>";
 
-    this.pView = new DwtComposite(appCtxt.getShell()); //creates an empty div as a child of main shell div
-    this.pView.setSize("500", "500"); // set width and height
-    this.pView.getHtmlElement().style.overflow = "auto"; // adds scrollbar
+    this.pView = new DwtComposite(appCtxt.getShell());
+    this.pView.setSize("500", "500"); 
+    this.pView.getHtmlElement().style.overflow = "auto";
     this.pView.getHtmlElement().innerHTML = HTML;
 
     // pass the title, view & buttons information to create dialog box
     this._dialog = new ZmDialog({title:sDialogTitle, view:this.pView, parent:appCtxt.getShell(), standardButtons:[DwtDialog.OK_BUTTON]});
     this._dialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._readKeyListener)); 
-    this._dialog.popup(); //show the dialog
+    this._dialog.popup();
 };
 
 /*
@@ -455,9 +455,8 @@ Com_Zimbra_PGP.prototype.errDialog = function(msg){
         this._errDialog.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._clrErrBtnListener));
         // Reset to a good state
         this._errDialog.reset();
-        // Set our message to the one passed in
+        // Set our message to the one passed in and pop it up!
         this._errDialog.setMessage(msg,style);
-        // Pop it up!
         this._errDialog.popup();
 };
 
