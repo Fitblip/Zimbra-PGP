@@ -5,7 +5,7 @@ else that's done in the zimbra interface
 
 TODO:
      => Button that links to my Github
-	 => Possibly cache already verified messages and they info in sessionStorage()?
+     => Possibly cache already verified messages and their info in sessionStorage()?
 */
 
 /*
