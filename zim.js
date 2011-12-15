@@ -5,7 +5,17 @@ else that's done in the zimbra interface
 
 TODO:
      => Button that links to my Github
-     => Possibly cache already verified messages and their info in sessionStorage()?
+     => Implement options via setUserProperty() and getUserProperty()
+
+// List all properties in object
+properties = appCtxt._zimletMgr._ZIMLETS_BY_ID['com_zimbra_pgp']._propsById
+for(var i in properties) {
+    if (properties.hasOwnProperty(i)) {
+        console.log(i + " = " + properties[i].value);
+    }
+}
+
+
 */
 
 /*
@@ -48,6 +58,15 @@ Com_Zimbra_PGP.prototype.match = function(line, startIndex) {
         header = true;
     }
     if (header) {
+        if (this.getUserProperty("ZimbraPGP_firstRun") == "false") {
+            alert('Not first run!');
+        } else {
+            this.setUserProperty("ZimbraPGP_firstRun","false",true);
+            alert('First run detected!')
+            /*
+               Do first run things 
+            */
+        }
         this.infoBar();
     }
     return null;
