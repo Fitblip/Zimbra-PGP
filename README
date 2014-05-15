@@ -1,8 +1,6 @@
-This Zimlet is here for reference purpose, it does not work in Zimbra 8+.
+This project has since been abandoned, but I'm keeping this Zimlet implementation around for reference. It won't work on Zimbra 8+
 
-
-There is a new Zimlet that does GPG for Zimbra. please got to:
-
- https://github.com/barrydegraaff/pgp-zimlet
+There is a working implementation that does GPG signing and encryption for Zimbra. It can be found here:
+https://github.com/barrydegraaff/pgp-zimlet
 
 
